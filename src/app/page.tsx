@@ -14,6 +14,9 @@ const Home = () => {
       <div className="flex justify-center">
         <h1 className="text-4xl font-bold">Welcome to GigglesFest</h1>
       </div>
+      <Button variant="outline" className="mt-4" onClick={handleClick}>
+        Click me
+      </Button>
     </div>
   );
 };
