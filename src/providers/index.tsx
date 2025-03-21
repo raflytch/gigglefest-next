@@ -1,9 +1,9 @@
 "use client";
 
+import { store } from "@/features/store";
 import { Provider } from "react-redux";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { store } from "@/features/store";
 
 const queryClient = new QueryClient({
   defaultOptions: {
