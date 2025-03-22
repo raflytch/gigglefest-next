@@ -8,6 +8,8 @@ interface AuthState {
   isAuthenticated: boolean;
   loading: boolean;
   error: string | null;
+  registrationEmail: string | null;
+  verificationToken: string | null;
 }
 
 const initialState: AuthState = {
@@ -17,6 +19,8 @@ const initialState: AuthState = {
     typeof window !== "undefined" ? !!Cookies.get("token") : false,
   loading: false,
   error: null,
+  registrationEmail: null,
+  verificationToken: null,
 };
 
 const authSlice = createSlice({
@@ -50,6 +54,19 @@ const authSlice = createSlice({
     clearAuthError: (state) => {
       state.error = null;
     },
+    setRegistrationData: (
+      state,
+      action: PayloadAction<{ email: string; verificationToken: string }>
+    ) => {
+      state.registrationEmail = action.payload.email;
+      state.verificationToken = action.payload.verificationToken;
+      Cookies.set("registration_email", action.payload.email, { expires: 1 });
+    },
+    clearRegistrationData: (state) => {
+      state.registrationEmail = null;
+      state.verificationToken = null;
+      Cookies.remove("registration_email");
+    },
   },
 });
 
@@ -59,5 +76,7 @@ export const {
   setLoading,
   setAuthError,
   clearAuthError,
+  setRegistrationData,
+  clearRegistrationData,
 } = authSlice.actions;
 export default authSlice.reducer;
