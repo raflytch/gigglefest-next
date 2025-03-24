@@ -1,5 +1,5 @@
 import axios from "axios";
-import Cookies from "js-cookie";
+import { parseCookies, destroyCookie } from "nookies";
 import { store } from "@/features/store";
 import { setAuthError } from "@/features/auth/authSlice";
 
@@ -12,7 +12,8 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const token = Cookies.get("token");
+    const cookies = parseCookies();
+    const token = cookies.token;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -29,7 +30,7 @@ api.interceptors.response.use(
       store.dispatch(setAuthError(errorMessage));
 
       if (error.response.status === 401) {
-        Cookies.remove("token");
+        destroyCookie(null, "token", { path: "/" });
       }
     } else if (error.request) {
       store.dispatch(setAuthError("Network error. Please try again."));

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import Cookies from "js-cookie";
+import { parseCookies, setCookie, destroyCookie } from "nookies";
 import { User } from "@/types/auth";
 
 interface AuthState {
@@ -12,11 +12,18 @@ interface AuthState {
   verificationToken: string | null;
 }
 
+const getInitialToken = () => {
+  if (typeof window !== "undefined") {
+    const cookies = parseCookies();
+    return cookies.token || null;
+  }
+  return null;
+};
+
 const initialState: AuthState = {
-  token: typeof window !== "undefined" ? Cookies.get("token") || null : null,
+  token: getInitialToken(),
   user: null,
-  isAuthenticated:
-    typeof window !== "undefined" ? !!Cookies.get("token") : false,
+  isAuthenticated: typeof window !== "undefined" ? !!getInitialToken() : false,
   loading: false,
   error: null,
   registrationEmail: null,
@@ -36,14 +43,17 @@ const authSlice = createSlice({
       state.user = user;
       state.isAuthenticated = true;
       state.error = null;
-      Cookies.set("token", token, { expires: 7 });
+      setCookie(null, "token", token, {
+        maxAge: 7 * 24 * 60 * 60,
+        path: "/",
+      });
     },
     logout: (state) => {
       state.token = null;
       state.user = null;
       state.isAuthenticated = false;
       state.error = null;
-      Cookies.remove("token");
+      destroyCookie(null, "token", { path: "/" });
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
@@ -60,12 +70,15 @@ const authSlice = createSlice({
     ) => {
       state.registrationEmail = action.payload.email;
       state.verificationToken = action.payload.verificationToken;
-      Cookies.set("registration_email", action.payload.email, { expires: 1 });
+      setCookie(null, "registration_email", action.payload.email, {
+        maxAge: 24 * 60 * 60,
+        path: "/",
+      });
     },
     clearRegistrationData: (state) => {
       state.registrationEmail = null;
       state.verificationToken = null;
-      Cookies.remove("registration_email");
+      destroyCookie(null, "registration_email", { path: "/" });
     },
   },
 });
