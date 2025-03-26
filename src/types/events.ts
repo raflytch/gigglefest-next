@@ -1,3 +1,17 @@
+export interface Ticket {
+  id: number;
+  name: string;
+  price: number;
+  quantity: number;
+  userId: number;
+  eventId: number;
+  categoryId: number;
+  imageUrl: string;
+  artist: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Event {
   id: number;
   name: string;
@@ -7,6 +21,7 @@ export interface Event {
   imageUrl: string;
   createdAt: string;
   updatedAt: string;
+  tickets?: Ticket[];
 }
 
 export interface Meta {

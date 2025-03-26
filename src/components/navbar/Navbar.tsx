@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { CalendarDays, Menu, X, Home, User, LogOut, LogIn } from "lucide-react";
 import { parseCookies, destroyCookie } from "nookies";
@@ -29,6 +29,7 @@ export function Navbar() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const pathname = usePathname();
   const dispatch = useAppDispatch();
+  const router = useRouter();
 
   useEffect(() => {
     const cookies = parseCookies();
@@ -59,6 +60,7 @@ export function Navbar() {
     setUser(null);
     setIsAuthenticated(false);
     dispatch(logout());
+    router.push("/login");
   };
 
   useEffect(() => {
