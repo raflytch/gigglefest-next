@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/providers";
 import { NavbarWrapper } from "@/components/navbar/NavbarWrapper";
+import { Toaster } from "sonner";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -27,6 +28,7 @@ const RootLayout = ({
       >
         <Providers>
           <NavbarWrapper>{children}</NavbarWrapper>
+          <Toaster richColors position="top-right" />
         </Providers>
       </body>
     </html>

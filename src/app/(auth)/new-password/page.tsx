@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { AuthHero } from "@/components/auth/AuthHero";
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Link from "next/link";
+import { usePasswordReset } from "@/hooks/usePasswordReset";
+import { useAppSelector } from "@/features/hooks";
+import { parseCookies } from "nookies";
 
 export default function NewPasswordPage() {
   const [formData, setFormData] = useState({
@@ -23,8 +25,22 @@ export default function NewPasswordPage() {
     confirmPassword: "",
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+
+  const { resetPassword } = usePasswordReset();
+  const { loading: isLoading, error } = useAppSelector(
+    (state) => state.passwordReset
+  );
+
+  useEffect(() => {
+    const cookies = parseCookies();
+    const resetToken = cookies.reset_token;
+    const resetOtp = cookies.reset_otp;
+
+    if (!resetToken || !resetOtp) {
+      router.push("/reset-password");
+    }
+  }, [router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -35,16 +51,13 @@ export default function NewPasswordPage() {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      return; // Add error handling if needed
+      return;
     }
 
-    setIsLoading(true);
-
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      router.push("/login?reset=success");
-    }, 1500);
+    resetPassword({
+      password: formData.password,
+      confirmPassword: formData.confirmPassword,
+    });
   };
 
   const passwordsMatch = formData.password === formData.confirmPassword;
@@ -129,6 +142,10 @@ export default function NewPasswordPage() {
                         </p>
                       )}
                     </div>
+
+                    {error && (
+                      <p className="text-sm text-destructive mt-1">{error}</p>
+                    )}
                   </div>
                 </CardContent>
 

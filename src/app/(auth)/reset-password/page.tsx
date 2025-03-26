@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { AuthHero } from "@/components/auth/AuthHero";
 import { Button } from "@/components/ui/button";
@@ -16,21 +16,25 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Link from "next/link";
+import { usePasswordReset } from "@/hooks/usePasswordReset";
+import { useAppSelector } from "@/features/hooks";
 
 export default function ResetPasswordPage() {
   const [email, setEmail] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { forgotPassword } = usePasswordReset();
+  const { loading: isLoading, error } = useAppSelector(
+    (state) => state.passwordReset
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+    forgotPassword({ email });
+  };
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      router.push(`/otp-verification?email=${encodeURIComponent(email)}`);
-    }, 1500);
+  const handleToLogin = (e: React.MouseEvent) => {
+    e.preventDefault();
+    router.push("/login");
   };
 
   return (
@@ -65,6 +69,9 @@ export default function ResetPasswordPage() {
                         required
                         className="h-12 text-base px-4"
                       />
+                      {error && (
+                        <p className="text-sm text-destructive mt-1">{error}</p>
+                      )}
                     </div>
                   </div>
                 </CardContent>
@@ -85,7 +92,10 @@ export default function ResetPasswordPage() {
                     )}
                   </Button>
 
-                  <Button className="w-full h-12 text-base font-medium bg-transparent border border-primary text-primary hover:bg-gray-200">
+                  <Button
+                    className="w-full h-12 text-base font-medium bg-transparent border border-primary text-primary hover:bg-gray-200"
+                    onClick={handleToLogin}
+                  >
                     <Link
                       href="/login"
                       className="text-primary hover:underline text-center"
