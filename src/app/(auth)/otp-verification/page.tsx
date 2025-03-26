@@ -38,7 +38,6 @@ export default function OTPVerificationPage() {
     loading: isLoading,
     error,
     email,
-    token,
   } = useAppSelector((state) => state.passwordReset);
 
   useEffect(() => {

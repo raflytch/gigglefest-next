@@ -6,10 +6,6 @@ import {
   generateOtp,
   verifyOtp,
   resetPassword,
-  ForgotPasswordRequest,
-  GenerateOtpRequest,
-  VerifyOtpRequest,
-  ResetPasswordRequest,
 } from "@/services/authService";
 import { setCookie, destroyCookie } from "nookies";
 import {
@@ -22,6 +18,12 @@ import {
   resetState,
 } from "@/features/auth/passwordResetSlice";
 import { toast } from "sonner";
+import {
+  ForgotPasswordRequest,
+  GenerateOtpRequest,
+  VerifyOtpRequest,
+  ResetPasswordRequest,
+} from "@/types/passwordReset";
 
 export const usePasswordReset = () => {
   const dispatch = useAppDispatch();
